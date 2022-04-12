@@ -22,9 +22,20 @@ function customerSuccessBalancing(
     (a, b) => a.score - b.score
   );
 
-  const alocatedCustomers = cssSortedByScore.map((cs) =>
-    alocateCustomers(withoutAlocation, cs)
-  );
+  const alocatedCustomers = cssSortedByScore.map((cs) => {
+    let customersQtd = 0;
+
+    for (let customer of withoutAlocation) {
+      if (customer.score <= cs.score) {
+        withoutAlocation.delete(customer);
+        customersQtd++;
+      } else {
+        break;
+      }
+    }
+
+    return { id: cs.id, customers: customersQtd };
+  });
 
   const orderAlocatedCustomers = alocatedCustomers.sort(
     (a, b) => b.customers - a.customers
@@ -37,21 +48,6 @@ function customerSuccessBalancing(
 
   return maxCustomers;
 }
-
-const alocateCustomers = (customers, cs) => {
-  let customersQtd = 0;
-
-  for(let customer of customers) {
-    if (customer.score <= cs.score) {
-      customers.delete(customer);
-      customersQtd++;
-    }else{
-      break;
-    }
-  }
-
-  return { id: cs.id, customers: customersQtd };
-};
 
 test("Scenario 1", () => {
   const css = [
