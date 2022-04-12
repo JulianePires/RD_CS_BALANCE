@@ -107,7 +107,6 @@ test("Scenario 3", () => {
   expect(customerSuccessBalancing(css, customers, csAway)).toEqual(998);
 
   if (new Date().getTime() - testStartTime > testTimeoutInMs) {
-    console.log(new Date().getTime() - testStartTime);
     throw new Error(`Test took longer than ${testTimeoutInMs}ms!`);
   }
 });
