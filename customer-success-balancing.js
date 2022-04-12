@@ -5,35 +5,24 @@
  * @param {array} customerSuccessAway
  */
 
-const alocateCustomers = (customers, cs) => {
-  let customersQtd = 0;
-
-  customers.forEach((customer) => {
-    if (customer.score <= cs.score) {
-      customers.delete(customer);
-      customersQtd++;
-    }
-  });
-
-  return { id: cs.id, customers: customersQtd };
-};
-
 function customerSuccessBalancing(
   customerSuccess,
   customers,
   customerSuccessAway
 ) {
-  let withoutAlocation = new Set(customers);
+  const customersSortedByScore = customers.sort((a, b) => a.score - b.score);
+
+  let withoutAlocation = new Set(customersSortedByScore);
 
   const presentCustomerSuccess = customerSuccess.filter(
     (cs) => !customerSuccessAway.includes(cs.id)
   );
 
-  const sortedByScore = presentCustomerSuccess.sort(
+  const cssSortedByScore = presentCustomerSuccess.sort(
     (a, b) => a.score - b.score
   );
 
-  const alocatedCustomers = sortedByScore.map((cs) =>
+  const alocatedCustomers = cssSortedByScore.map((cs) =>
     alocateCustomers(withoutAlocation, cs)
   );
 
@@ -48,6 +37,21 @@ function customerSuccessBalancing(
 
   return maxCustomers;
 }
+
+const alocateCustomers = (customers, cs) => {
+  let customersQtd = 0;
+
+  for(let customer of customers) {
+    if (customer.score <= cs.score) {
+      customers.delete(customer);
+      customersQtd++;
+    }else{
+      break;
+    }
+  }
+
+  return { id: cs.id, customers: customersQtd };
+};
 
 test("Scenario 1", () => {
   const css = [
@@ -107,6 +111,7 @@ test("Scenario 3", () => {
   expect(customerSuccessBalancing(css, customers, csAway)).toEqual(998);
 
   if (new Date().getTime() - testStartTime > testTimeoutInMs) {
+    console.log(new Date().getTime() - testStartTime);
     throw new Error(`Test took longer than ${testTimeoutInMs}ms!`);
   }
 });
